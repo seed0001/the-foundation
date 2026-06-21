@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import sys
 import tempfile
 import threading
@@ -22,6 +23,33 @@ from ..config import ENGINES_DIR, VOICES_DIR
 
 _models: dict = {}
 _load_lock = threading.Lock()
+
+
+def clean_for_speech(text: str) -> str:
+    """Strip markup so the TTS doesn't read symbols like '*' or 'asterisk'.
+
+    Removes code blocks, HTML, markdown emphasis/headings/lists/quotes, and
+    link/image syntax (keeping the visible text), leaving clean prose to speak.
+    """
+    if not text:
+        return ""
+    # Drop fenced code blocks entirely (reading code aloud is noise).
+    text = re.sub(r"```.*?```", " ", text, flags=re.S)
+    # HTML tags.
+    text = re.sub(r"<\/?[a-zA-Z][a-zA-Z0-9]*(?:\s[^>]*)?\/?>", "", text)
+    # Images / links -> their visible text.
+    text = re.sub(r"!\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    # Headings, blockquotes, and list bullets at line starts.
+    text = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", text)
+    text = re.sub(r"(?m)^\s*>\s?", "", text)
+    text = re.sub(r"(?m)^\s*[-*+•]\s+", "", text)
+    # Emphasis / inline-code / strikethrough markers.
+    text = re.sub(r"[*_`~]", "", text)
+    # Collapse leftover whitespace.
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 
 class EngineNotInstalled(RuntimeError):
@@ -126,7 +154,7 @@ def _synth_lux(text: str, ref: Path) -> bytes:
 
 # --- Public API ------------------------------------------------------------
 def synthesize(engine: str, text: str, voice_filename: str) -> bytes:
-    text = (text or "").strip()
+    text = clean_for_speech(text)
     if not text:
         raise TTSError("No text to synthesize.")
 

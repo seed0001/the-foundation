@@ -3,7 +3,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { SendHorizontal, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, stripHtml } from "@/lib/utils";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -16,12 +16,13 @@ export default function AIChatPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   async function playReply(text: string) {
-    if (!text.trim()) return;
+    const clean = stripHtml(text).trim();
+    if (!clean) return;
     try {
       const res = await fetch("/api/tts", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text: clean }),
       });
       if (!res.ok) return;
       const blob = await res.blob();
@@ -100,7 +101,15 @@ export default function AIChatPage() {
                   : "bg-muted text-foreground",
               )}
             >
-              {m.content || <span className="opacity-50">…</span>}
+              {m.content ? (
+                m.role === "assistant" ? (
+                  stripHtml(m.content)
+                ) : (
+                  m.content
+                )
+              ) : (
+                <span className="opacity-50">…</span>
+              )}
             </div>
           </div>
         ))}
