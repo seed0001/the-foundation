@@ -1,6 +1,7 @@
 import {
   MessageSquare,
   Brain,
+  MessagesSquare,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -27,6 +28,11 @@ export const navItems: NavItem[] = [
     label: "Memory",
     href: "/memory",
     icon: Brain,
+  },
+  {
+    label: "Communication",
+    href: "/communication",
+    icon: MessagesSquare,
   },
   {
     label: "Settings",

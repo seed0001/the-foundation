@@ -31,14 +31,22 @@ export function Sidebar() {
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
-        {/* Brand */}
+        {/* Brand — links back to the home screen */}
         <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
-            {site.shortName}
-          </div>
-          {!collapsed && (
-            <span className="truncate text-lg font-semibold">{site.name}</span>
-          )}
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex min-w-0 items-center gap-3"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
+              {site.shortName}
+            </div>
+            {!collapsed && (
+              <span className="truncate text-lg font-semibold">
+                {site.name}
+              </span>
+            )}
+          </Link>
           <button
             className="ml-auto md:hidden"
             onClick={() => setMobileOpen(false)}

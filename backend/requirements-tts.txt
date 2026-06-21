@@ -1,0 +1,7 @@
+# Heavy TTS dependencies — installed separately via setup_tts.bat.
+# These pull in PyTorch and are large (GBs). XTTS uses the maintained Coqui fork.
+coqui-tts
+soundfile
+
+# LuxTTS itself is NOT a pip package — setup_tts.bat clones it from GitHub and
+# installs its own requirements.txt (it provides the `zipvoice` package).

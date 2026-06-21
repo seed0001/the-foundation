@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { SendHorizontal } from "lucide-react";
+import { SendHorizontal, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,28 @@ export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [speak, setSpeak] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  async function playReply(text: string) {
+    if (!text.trim()) return;
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      audioRef.current?.pause();
+      const audio = new Audio(URL.createObjectURL(blob));
+      audioRef.current = audio;
+      audio.play();
+    } catch {
+      // ignore playback errors
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -33,10 +54,12 @@ export default function AIChatPage() {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let full = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
+        full += chunk;
         setMessages((prev) => {
           const next = [...prev];
           const last = next[next.length - 1];
@@ -45,6 +68,7 @@ export default function AIChatPage() {
         });
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
       }
+      if (speak) playReply(full);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Request failed";
       setMessages((prev) => {
@@ -83,6 +107,20 @@ export default function AIChatPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex items-center gap-2 pt-2">
+        <Button
+          type="button"
+          variant={speak ? "primary" : "outline"}
+          size="icon"
+          onClick={() => setSpeak((s) => !s)}
+          aria-label={speak ? "Voice on" : "Voice off"}
+          title={speak ? "Voice on" : "Voice off"}
+        >
+          {speak ? (
+            <Volume2 className="h-5 w-5" />
+          ) : (
+            <VolumeX className="h-5 w-5" />
+          )}
+        </Button>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}

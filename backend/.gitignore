@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# App data (databases, vector store, vault, settings, voice clips)
+data/
+
+# Cloned TTS engines (e.g. LuxTTS) — pulled by setup_tts.bat
+engines/
+
+# Env
+.env
