@@ -25,14 +25,14 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-border bg-card transition-[width,transform] duration-200 ease-in-out",
+          "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width,transform] duration-200 ease-in-out",
           collapsed ? "w-[68px]" : "w-64",
           // Mobile: slide in/out; Desktop: always visible.
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
         )}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center gap-3 border-b border-border px-4">
+        <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
             {site.shortName}
           </div>
@@ -70,7 +70,7 @@ export function Sidebar() {
         </nav>
 
         {/* Collapse toggle (desktop only) */}
-        <div className="hidden border-t border-border p-3 md:block">
+        <div className="hidden border-t border-sidebar-border p-3 md:block">
           <button
             onClick={toggleCollapsed}
             className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
@@ -112,7 +112,7 @@ function SidebarLink({
       className={cn(
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
         active
-          ? "bg-accent text-accent-foreground"
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
           : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
         collapsed && "justify-center",
       )}

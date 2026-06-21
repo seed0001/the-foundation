@@ -1,4 +1,9 @@
-import { MessageSquare, type LucideIcon } from "lucide-react";
+import {
+  MessageSquare,
+  Brain,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 
 export type NavItem = {
   label: string;
@@ -17,5 +22,15 @@ export const navItems: NavItem[] = [
     label: "AI Chat",
     href: "/ai",
     icon: MessageSquare,
+  },
+  {
+    label: "Memory",
+    href: "/memory",
+    icon: Brain,
+  },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: Settings,
   },
 ];
