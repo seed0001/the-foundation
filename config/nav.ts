@@ -1,4 +1,4 @@
-import { type LucideIcon } from "lucide-react";
+import { MessageSquare, type LucideIcon } from "lucide-react";
 
 export type NavItem = {
   label: string;
@@ -9,7 +9,13 @@ export type NavItem = {
 };
 
 /**
- * Sidebar navigation. Empty by design — add your own items as you build pages.
+ * Sidebar navigation. Add an item per page you build.
  * Each entry: create app/(app)/<route>/page.tsx and add it here.
  */
-export const navItems: NavItem[] = [];
+export const navItems: NavItem[] = [
+  {
+    label: "AI Chat",
+    href: "/ai",
+    icon: MessageSquare,
+  },
+];
